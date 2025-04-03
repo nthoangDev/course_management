@@ -86,6 +86,8 @@ DATABASES = {
 import pymysql
 pymysql.install_as_MySQLdb()
 
+# Chỉ định lớp model đại diện cho một User, mặc định là “auth.User”.
+AUTH_USER_MODEL = 'courses.User'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
