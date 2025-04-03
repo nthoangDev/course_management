@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'courses.apps.CoursesConfig', # Ta cần cho django biết về sự tồn tại của module course thông qua biến INSTALLED_APPS
 ]
 
 MIDDLEWARE = [
@@ -72,12 +73,18 @@ WSGI_APPLICATION = 'courseapis.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# Cấu hình cho kết nối đến CSDL MySQL
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'coursedb',
+        'USER': 'root',
+        'PASSWORD': 'admin123',
+        'HOST': '' # mặc định localhost
     }
 }
+import pymysql
+pymysql.install_as_MySQLdb()
 
 
 # Password validation
