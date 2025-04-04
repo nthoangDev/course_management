@@ -36,6 +36,25 @@ class Course(BaseModel):
 
     def __str__(self):
         return self.subject
+
+
+class Lesson(BaseModel):
+    subject = models.CharField(max_length=255)
+    content = models.TextField()
+    image = models.ImageField(upload_to='courses/%Y/%m')
+    course = models.ForeignKey(Course, on_delete=models.CASCADE) # Khi mà course bị xóa th các lesson cũng sẽ bị xóa toàn bộ
+    tags = models.ManyToManyField('Tag')
+    class Meta:
+        unique_together = ('subject', 'course')  # Trong cùng mô course không thể có subject trùng nhau
+
+    def __str__(self):
+        return self.subject
+class Tag(BaseModel):
+    name = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return self.name
+
 # Notes :
 # - id: Trong django các trường dữ liệu sẽ tự sinh ra id -> nên không cần khai báo trường id
 
