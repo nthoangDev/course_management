@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'courses.apps.CoursesConfig', # Ta cần cho django biết về sự tồn tại của module course thông qua biến INSTALLED_APPS
+    'ckeditor',
+    'ckeditor_uploader',
 ]
 
 MIDDLEWARE = [
@@ -53,6 +55,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'courseapis.urls'
+
+CKEDITOR_UPLOAD_PATH = "ckeditors/lessons"
 
 TEMPLATES = [
     {

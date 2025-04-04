@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from ckeditor.fields import RichTextField
 
 # Trong django có sẵn một model User kế thừa AbstractUser (Khó mở rộng sau này)
 # => Vì vậy ta sẽ tự định nghĩa một model User để để mở rộng hơn
@@ -40,15 +41,18 @@ class Course(BaseModel):
 
 class Lesson(BaseModel):
     subject = models.CharField(max_length=255)
-    content = models.TextField()
+    content = RichTextField()
     image = models.ImageField(upload_to='courses/%Y/%m')
     course = models.ForeignKey(Course, on_delete=models.CASCADE) # Khi mà course bị xóa th các lesson cũng sẽ bị xóa toàn bộ
     tags = models.ManyToManyField('Tag')
+
     class Meta:
         unique_together = ('subject', 'course')  # Trong cùng mô course không thể có subject trùng nhau
 
     def __str__(self):
         return self.subject
+
+
 class Tag(BaseModel):
     name = models.CharField(max_length=50, unique=True)
 
