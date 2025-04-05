@@ -14,3 +14,8 @@ class CategorySerializer(serializers.ModelSerializer):
         # Chỉ định các trường sẽ được đưa vào trong quá trình serialize/deserialize
         fields = ['id', 'name']
 
+
+class CourseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Course
+        fields = ['id', 'subject', 'description', 'created_date', 'category_id']

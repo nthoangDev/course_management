@@ -11,7 +11,7 @@ router = DefaultRouter()
 # Đăng ký route cho viewset CategoryViewSet với prefix là 'categories'
 # Ví dụ: /categories/ → list, /categories/1/ → retrieve
 router.register('categories', views.CategoryViewSet, basename='category')
-
+router.register('courses', views.CourseViewSet, basename='course')
 # Cấu hình URL chính, bao gồm tất cả các URL mà router đã tạo ra
 urlpatterns = [
     path('', include(router.urls))  # Tự động sinh các đường dẫn từ router

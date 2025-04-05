@@ -14,3 +14,8 @@ class CategoryViewSet(viewsets.ViewSet, generics.ListAPIView):
 
     # Chỉ định serializer dùng để biến đổi dữ liệu Category sang JSON và ngược lại
     serializer_class = serializers.CategorySerializer
+
+class CourseViewSet(viewsets.ViewSet, generics.ListAPIView):
+    queryset = Course.objects.filter(active=True)
+    serializer_class = serializers.CourseSerializer
+
