@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'courses.apps.CoursesConfig', # Ta cần cho django biết về sự tồn tại của module course thông qua biến INSTALLED_APPS
     'ckeditor',
     'ckeditor_uploader',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
