@@ -1,12 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from ckeditor.fields import RichTextField
+from cloudinary.models import CloudinaryField
 
 # Trong django có sẵn một model User kế thừa AbstractUser (Khó mở rộng sau này)
 # => Vì vậy ta sẽ tự định nghĩa một model User để để mở rộng hơn
 # Chý ý nên cấu hình lại trong settings.py thuộc tính AUTH_USER_MODEL = “myapp.MyUser”
 class User(AbstractUser):
-    avatar = models.ImageField(upload_to='users/%Y/%m', null=True)
+    avatar = CloudinaryField(null=True) # models.ImageField(upload_to='users/%Y/%m', null=True)
 
 
 class BaseModel(models.Model):
@@ -29,7 +30,7 @@ class Category(BaseModel):
 class Course(BaseModel):
     subject = models.CharField(max_length=255)
     description = models.TextField(null=True)
-    image = models.ImageField(upload_to='courses/%Y/%m')
+    image = CloudinaryField(null=True) #models.ImageField(upload_to='courses/%Y/%m')
     category = models.ForeignKey(Category, on_delete=models.PROTECT) # on_delete=models.PROTECT trường này sẽ được bảo vệ và không thể xóa
 
     class Meta:
@@ -42,7 +43,7 @@ class Course(BaseModel):
 class Lesson(BaseModel):
     subject = models.CharField(max_length=255)
     content = RichTextField()
-    image = models.ImageField(upload_to='courses/%Y/%m')
+    image = CloudinaryField(null=True) # models.ImageField(upload_to='courses/%Y/%m')
     course = models.ForeignKey(Course, on_delete=models.CASCADE) # Khi mà course bị xóa th các lesson cũng sẽ bị xóa toàn bộ
     tags = models.ManyToManyField('Tag')
 
