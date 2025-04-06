@@ -15,12 +15,27 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ['id', 'name']
 
 
-class CourseSerializer(serializers.ModelSerializer):
+# Tạo một lớp serializer cơ bản kế thừa từ ModelSerializer để tùy chỉnh cách hiển thị dữ liệu
+class BaseSerializer(serializers.ModelSerializer):
+
+    # Ghi đè phương thức to_representation để tùy chỉnh dữ liệu trả về khi serialize
+    def to_representation(self, instance):
+        # Gọi phương thức to_representation gốc để lấy dữ liệu serialize mặc định dưới dạng dict
+        d = super().to_representation(instance)
+
+        # Gán giá trị 'image' bằng đường dẫn URL thật sự từ trường image của model (thay vì chỉ là tên file)
+        d['image'] = instance.image.url
+
+        # Trả về dict đã được chỉnh sửa — bao gồm cả các trường mặc định và đường dẫn ảnh
+        return d
+
+
+class CourseSerializer(BaseSerializer):
     class Meta:
         model = Course
-        fields = ['id', 'subject', 'description', 'created_date','category_id']
+        fields = ['id', 'subject', 'description', 'created_date', 'image','category_id']
 
-class LessonSerializer(serializers.ModelSerializer):
+class LessonSerializer(BaseSerializer):
     class Meta:
         model = Lesson
-        fields = ['id', 'subject', 'created_date']
+        fields = ['id', 'subject', 'created_date', 'image']
