@@ -1,4 +1,7 @@
 # Import các model Category, Lesson, Course từ file models.py của app courses
+from rest_framework.decorators import action
+from rest_framework.response import Response
+
 from courses.models import Category, Lesson, Course
 
 # Import file serializers.py trong app courses (chứa các class để chuyển đổi dữ liệu model)
@@ -39,3 +42,16 @@ class CourseViewSet(viewsets.ViewSet, generics.ListAPIView):
 
         # Trả về queryset đã được lọc theo các điều kiện
         return query
+
+    # Định nghĩa một custom action trong ViewSet (thường dùng với Django REST Framework).
+    @action(methods=['get'], url_path='lessons', detail=True)
+    # Định nghĩa hàm xử lý khi client gửi yêu cầu GET đến endpoint `/.../<pk>/lessons/`
+    def get_lesson(self, request, pk):
+        # Lấy object chính từ ViewSet theo khóa chính (pk), sau đó truy cập đến liên kết các bài học (lesson_set)
+        # và lọc những bài học có trường active=True
+        lessons = self.get_object().lesson_set.filter(active=True)
+
+        # Sử dụng serializer để chuyển danh sách lesson sang dạng JSON (có many=True vì là danh sách),
+        # sau đó trả về Response (dữ liệu JSON) cho client
+        return Response(serializers.LessonSerializer(lessons, many=True).data)
+
