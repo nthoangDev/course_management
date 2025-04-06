@@ -47,7 +47,7 @@ class MyLessonAdmin(admin.ModelAdmin):
     def image_view(self, lesson):
         if lesson:
             return mark_safe(
-                f'<img src="/static/{lesson.image.name}" width="120" >'
+                f'<img src="{lesson.image.url}" width="120" >'
             )
 
 
