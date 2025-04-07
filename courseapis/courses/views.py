@@ -60,6 +60,13 @@ class LessonViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
     # Lấy các bài học đang hoạt động và load trước tags (tối ưu truy vấn)
     # Sử dụng prefetch_related để tối ưu việc truy vấn các tag liên quan (mối quan hệ many-to-many)
     queryset = Lesson.objects.prefetch_related('tags').filter(active=True)
-
     # Dùng serializer có thêm nội dung và tags
     serializer_class = serializers.LessonDetailSerializer
+
+    # Tạo endpoint phụ: GET /lessons/<id>/comments/
+    @action(methods=['get'], url_path='comments', detail=True)
+    def get_comment(self, request, pk):
+        # select_related('user') giúp tối ưu truy vấn khi lấy thông tin user của mỗi bình luận.
+        comments = self.get_object().comment_set.select_related('user').filter(active=True)
+        return Response(serializers.CommentSerializer(comments, many=True).data)
+

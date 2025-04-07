@@ -60,6 +60,32 @@ class Tag(BaseModel):
     def __str__(self):
         return self.name
 
+
+# Model trừu tượng dùng chung cho các tương tác giữa user và lesson (ví dụ: Like, Bookmark, View,...)
+class Interaction(BaseModel):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
+
+    class Meta:
+        abstract = True
+
+
+# Model Comment kế thừa từ Interaction, đại diện cho bình luận của người dùng với bài học
+class Comment(Interaction):
+    content = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.content
+
+
+# Model Like kế thừa từ Interaction, đại diện cho lượt thích của người dùng với bài học
+class Like(Interaction):
+    class Meta:
+        # Đảm bảo mỗi người dùng chỉ like 1 lần cho mỗi bài học
+        unique_together = ('user', 'lesson')
+
+
+
 # Notes :
 # - id: Trong django các trường dữ liệu sẽ tự sinh ra id -> nên không cần khai báo trường id
 

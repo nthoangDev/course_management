@@ -1,5 +1,5 @@
 # Import các model Course, Category, Lesson từ ứng dụng courses
-from courses.models import Course, Category, Lesson, Tag
+from courses.models import Course, Category, Lesson, Tag, Comment, User
 
 # Import lớp serializers từ thư viện Django REST Framework để xây dựng serializer
 from rest_framework import serializers
@@ -56,3 +56,22 @@ class LessonDetailSerializer(LessonSerializer):
         # Kế thừa các trường từ LessonSerializer ban đầu, rồi thêm 'content' và 'tags
         fields = LessonSerializer.Meta.fields + ['content', 'tags']
 
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name','username','password', 'avatar']
+        extra_kwargs = {
+            # Trường password chỉ cho phép ghi (write-only), không hiển thị khi trả dữ liệu
+            'password': {
+                'write_only': True
+            }
+        }
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
+    class Meta:
+        model = Comment
+        fields = ['id', 'content', 'created_date', 'updated_date', 'user']
