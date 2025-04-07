@@ -60,7 +60,7 @@ class LessonDetailSerializer(LessonSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['first_name', 'last_name','username','password', 'avatar']
+        fields = ['first_name', 'last_name', 'username', 'password', 'avatar']
         extra_kwargs = {
             # Trường password chỉ cho phép ghi (write-only), không hiển thị khi trả dữ liệu
             'password': {
@@ -78,7 +78,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         d = super().to_representation(instance)
-        d['avatar'] = instance.avatar.url
+        d['avatar'] = instance.avatar.url if instance.avatar else ''
 
         return d
 

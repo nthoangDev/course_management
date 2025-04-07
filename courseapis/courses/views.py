@@ -1,14 +1,10 @@
 # Import các model Category, Lesson, Course từ file models.py của app courses
-from rest_framework.decorators import action
+from rest_framework.decorators import action, permission_classes
 from rest_framework.response import Response
-
 from courses.models import Category, Lesson, Course, User
-
 # Import file serializers.py trong app courses (chứa các class để chuyển đổi dữ liệu model)
 from courses import serializers, paginators
-
-# Import viewsets và generics từ Django REST Framework để tạo API view
-from rest_framework import viewsets, generics, parsers
+from rest_framework import viewsets, generics, parsers, permissions
 
 # Định nghĩa một class CategoryViewSet để xử lý API hiển thị danh sách Category
 class CategoryViewSet(viewsets.ViewSet, generics.ListAPIView):
@@ -76,3 +72,10 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
     serializer_class = serializers.UserSerializer
     # Cho phép xử lý dữ liệu dạng multipart (ví dụ: upload file, hình ảnh)
     parser_classes = [parsers.MultiPartParser]
+
+    # API trả về thông tin người dùng đang đăng nhập (yêu cầu xác thực) - endpoint GET /.../current_user/
+    @action(methods=['get'], url_path='current_user', detail=False, permission_classes=[permissions.IsAuthenticated])
+    def get_current_user(self, request):
+        return Response(serializers.UserSerializer(request.user).data)
+
+
