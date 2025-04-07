@@ -55,3 +55,11 @@ class CourseViewSet(viewsets.ViewSet, generics.ListAPIView):
         # sau đó trả về Response (dữ liệu JSON) cho client
         return Response(serializers.LessonSerializer(lessons, many=True).data)
 
+# ViewSet chỉ hỗ trợ xem chi tiết 1 bài học (GET /lessons/<id>/)
+class LessonViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
+    # Lấy các bài học đang hoạt động và load trước tags (tối ưu truy vấn)
+    # Sử dụng prefetch_related để tối ưu việc truy vấn các tag liên quan (mối quan hệ many-to-many)
+    queryset = Lesson.objects.prefetch_related('tags').filter(active=True)
+
+    # Dùng serializer có thêm nội dung và tags
+    serializer_class = serializers.LessonDetailSerializer

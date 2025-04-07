@@ -1,5 +1,5 @@
 # Import các model Course, Category, Lesson từ ứng dụng courses
-from courses.models import Course, Category, Lesson
+from courses.models import Course, Category, Lesson, Tag
 
 # Import lớp serializers từ thư viện Django REST Framework để xây dựng serializer
 from rest_framework import serializers
@@ -39,3 +39,20 @@ class LessonSerializer(BaseSerializer):
     class Meta:
         model = Lesson
         fields = ['id', 'subject', 'created_date', 'image']
+
+# Định nghĩa một serializer cho model Tag
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = ['id', 'name']
+
+
+# Định nghĩa một serializer chi tiết cho model Lesson
+class LessonDetailSerializer(LessonSerializer):
+    # Thêm trường tags để hiển thị danh sách các tag liên kết, sử dụng TagSerializer để serialize từng tag
+    tags = TagSerializer(many=True)  # many=True nghĩa là một bài học có thể có nhiều tags
+    class Meta:
+        model = LessonSerializer.Meta.model
+        # Kế thừa các trường từ LessonSerializer ban đầu, rồi thêm 'content' và 'tags
+        fields = LessonSerializer.Meta.fields + ['content', 'tags']
+
