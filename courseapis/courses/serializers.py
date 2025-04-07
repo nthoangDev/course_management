@@ -68,6 +68,20 @@ class UserSerializer(serializers.ModelSerializer):
             }
         }
 
+    # Tạo user mới và mã hóa mật khẩu trước khi lưu
+    def create(self, validated_data):
+        data = validated_data.copy()
+        u = User(**data)
+        u.set_password(u.password)  # Mã hóa mật khẩu
+        u.save()
+        return u
+
+    def to_representation(self, instance):
+        d = super().to_representation(instance)
+        d['avatar'] = instance.avatar.url
+
+        return d
+
 
 class CommentSerializer(serializers.ModelSerializer):
     user = UserSerializer()

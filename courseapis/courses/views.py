@@ -2,13 +2,13 @@
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from courses.models import Category, Lesson, Course
+from courses.models import Category, Lesson, Course, User
 
 # Import file serializers.py trong app courses (chứa các class để chuyển đổi dữ liệu model)
 from courses import serializers, paginators
 
 # Import viewsets và generics từ Django REST Framework để tạo API view
-from rest_framework import viewsets, generics
+from rest_framework import viewsets, generics, parsers
 
 # Định nghĩa một class CategoryViewSet để xử lý API hiển thị danh sách Category
 class CategoryViewSet(viewsets.ViewSet, generics.ListAPIView):
@@ -70,3 +70,9 @@ class LessonViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
         comments = self.get_object().comment_set.select_related('user').filter(active=True)
         return Response(serializers.CommentSerializer(comments, many=True).data)
 
+
+class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
+    queryset = User.objects.filter(is_active=True)
+    serializer_class = serializers.UserSerializer
+    # Cho phép xử lý dữ liệu dạng multipart (ví dụ: upload file, hình ảnh)
+    parser_classes = [parsers.MultiPartParser]
