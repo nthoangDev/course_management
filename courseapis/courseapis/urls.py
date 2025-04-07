@@ -42,5 +42,10 @@ urlpatterns = [
     re_path(r'^ckeditor/', include('ckeditor_uploader.urls')),
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     re_path(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name = 'schema-swagger-ui'),
-    re_path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc')
+    re_path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
 ]
+
+
+CLIENT_ID = 'a2UpkaZJjUOoEJOVA4kR0z1ejmMPs9VMDQQnFB4z'
+CLIENT_SECRET = 'GzGtDSW26qvWor1TSgei7YYRForZI0uR8Q7ZqOD1X5vU45bFjFgn9eGUXWnJ9qNpTRxGwAQKNKtj1zgOM8rjAiG3uUWiEPQxYKjBUaFh5mnC6doIJFhuwZ6UJSIVw4HR'

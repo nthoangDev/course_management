@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'ckeditor_uploader',
     'rest_framework',
     'drf_yasg',
+    'oauth2_provider',
+
 ]
 
 MIDDLEWARE = [
@@ -149,3 +151,14 @@ cloudinary.config(
     api_secret = "506_HMPvosnq-znGAu0Q-t12EVo", # Click 'View API Keys' above to copy your API secret
     secure=True
 )
+
+# Cấu hình cho REST framework để sử dụng OAuth2 cho xác thực
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': ('oauth2_provider.contrib.rest_framework.OAuth2Authentication',)  # Sử dụng OAuth2 cho xác thực
+}
+
+# Cấu hình cho OAuth2 provider, sử dụng JSONAuthLibCore để xử lý xác thực
+OAUTH2_PROVIDER = {
+    # parses OAuth2 data from application/json requests
+    'OAUTH2_BACKEND_CLASS': 'oauth2_provider.oauth2_backends.JSONOAuthLibCore',
+}
