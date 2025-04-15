@@ -4,7 +4,8 @@ from rest_framework.response import Response
 from courses.models import Category, Lesson, Course, User, Comment
 # Import file serializers.py trong app courses (chứa các class để chuyển đổi dữ liệu model)
 from courses import serializers, paginators, permis
-from rest_framework import viewsets, generics, parsers, permissions
+from rest_framework import viewsets, generics, parsers, permissions, status
+
 
 # Định nghĩa một class CategoryViewSet để xử lý API hiển thị danh sách Category
 class CategoryViewSet(viewsets.ViewSet, generics.ListAPIView):
@@ -73,11 +74,13 @@ class LessonViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
                 'user': request.user.pk,
                 'lesson': pk
             })
+            t.is_valid(raise_exception=True)
+            c = t.save()
+            return Response(serializers.CommentSerializer(c).data, status=status.HTTP_201_CREATED)
         else:
             # select_related('user') giúp tối ưu truy vấn khi lấy thông tin user của mỗi bình luận.
             comments = self.get_object().comment_set.select_related('user').filter(active=True)
             return Response(serializers.CommentSerializer(comments, many=True).data)
-
 
 
 
