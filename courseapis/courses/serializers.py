@@ -51,10 +51,20 @@ class TagSerializer(serializers.ModelSerializer):
 class LessonDetailSerializer(LessonSerializer):
     # Thêm trường tags để hiển thị danh sách các tag liên kết, sử dụng TagSerializer để serialize từng tag
     tags = TagSerializer(many=True)  # many=True nghĩa là một bài học có thể có nhiều tags
+    liked = serializers.SerializerMethodField()
+
+    def get_liked(self, lesson):
+        requests = self.context.get('request')
+        if requests and requests.user.is_authenticated:
+            return lesson.like_set_filter(user=requests.user, active=True).exists()
+
     class Meta:
         model = LessonSerializer.Meta.model
         # Kế thừa các trường từ LessonSerializer ban đầu, rồi thêm 'content' và 'tags
-        fields = LessonSerializer.Meta.fields + ['content', 'tags']
+        fields = LessonSerializer.Meta.fields + ['content', 'tags', 'liked']
+
+
+# class AuthentcatedLessonDetailSerializer(LessonDetailSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):

@@ -1,7 +1,7 @@
 # Import các model Category, Lesson, Course từ file models.py của app courses
 from rest_framework.decorators import action, permission_classes
 from rest_framework.response import Response
-from courses.models import Category, Lesson, Course, User, Comment
+from courses.models import Category, Lesson, Course, User, Comment, Like
 # Import file serializers.py trong app courses (chứa các class để chuyển đổi dữ liệu model)
 from courses import serializers, paginators, permis
 from rest_framework import viewsets, generics, parsers, permissions, status
@@ -63,6 +63,8 @@ class LessonViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
         if self.action.__eq__('get_comments'):
             if self.request.method.__eq__('POST'):
                 return [permissions.IsAuthenticated]
+        elif self.action.__eq__('like'):
+            return [permissions.IsAuthenticated]
 
         return [permissions.AllowAny()]
     # Tạo endpoint phụ: GET /lessons/<id>/comments/
@@ -81,6 +83,15 @@ class LessonViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
             # select_related('user') giúp tối ưu truy vấn khi lấy thông tin user của mỗi bình luận.
             comments = self.get_object().comment_set.select_related('user').filter(active=True)
             return Response(serializers.CommentSerializer(comments, many=True).data)
+
+    @action(methods=['post'], url_path='like', detail=True)
+    def like(self, request, pk):
+        li, created = Like.objects.get_or_create(user=request.user, lesson=self.get_object())
+        if not created:
+            li.active = not li.active
+
+        li.save()
+        return Response(serializers.LessonDetailSerializer(self.get_object(), context={'request': self.request}).data)
 
 class CommentViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.UpdateAPIView):
     queryset = Comment.objects.filter(active=True)
