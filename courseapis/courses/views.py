@@ -3,7 +3,7 @@ from rest_framework.decorators import action, permission_classes
 from rest_framework.response import Response
 from courses.models import Category, Lesson, Course, User
 # Import file serializers.py trong app courses (chứa các class để chuyển đổi dữ liệu model)
-from courses import serializers, paginators
+from courses import serializers, paginators, permis
 from rest_framework import viewsets, generics, parsers, permissions
 
 # Định nghĩa một class CategoryViewSet để xử lý API hiển thị danh sách Category
@@ -67,11 +67,19 @@ class LessonViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
         return Response(serializers.CommentSerializer(comments, many=True).data)
 
 
-class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
+class UserViewSet(viewsets.ViewSet, generics.CreateAPIView, generics.UpdateAPIView):
     queryset = User.objects.filter(is_active=True)
     serializer_class = serializers.UserSerializer
     # Cho phép xử lý dữ liệu dạng multipart (ví dụ: upload file, hình ảnh)
     parser_classes = [parsers.MultiPartParser]
+
+    def get_permissions(self):
+        if self.request.method in ['PUT', 'PATCH']:
+            # Áp dụng quyền kiểm tra chủ sở hữu (chỉ cho phép nếu là chủ object)
+            return [permis.OwnerPerms()]
+
+        # Ngược lại (ví dụ: GET, POST...), cho phép truy cập tự do không cần xác thực
+        return [permissions.AllowAny()]
 
     # API trả về thông tin người dùng đang đăng nhập (yêu cầu xác thực) - endpoint GET /.../current_user/
     @action(methods=['get'], url_path='current_user', detail=False, permission_classes=[permissions.IsAuthenticated])

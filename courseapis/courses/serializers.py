@@ -76,6 +76,13 @@ class UserSerializer(serializers.ModelSerializer):
         u.save()
         return u
 
+    def update(self, instance, validated_data):
+        if 'password' in validated_data:
+            # Sử dụng phương thức set_password để mã hóa mật khẩu trước khi lưu
+            instance.set_password(validated_data['password'])
+            instance.save()
+
+        return instance
     def to_representation(self, instance):
         d = super().to_representation(instance)
         d['avatar'] = instance.avatar.url if instance.avatar else ''
