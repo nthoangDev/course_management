@@ -1,7 +1,7 @@
 # Import các model Category, Lesson, Course từ file models.py của app courses
 from rest_framework.decorators import action, permission_classes
 from rest_framework.response import Response
-from courses.models import Category, Lesson, Course, User
+from courses.models import Category, Lesson, Course, User, Comment
 # Import file serializers.py trong app courses (chứa các class để chuyển đổi dữ liệu model)
 from courses import serializers, paginators, permis
 from rest_framework import viewsets, generics, parsers, permissions
@@ -58,13 +58,27 @@ class LessonViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
     queryset = Lesson.objects.prefetch_related('tags').filter(active=True)
     # Dùng serializer có thêm nội dung và tags
     serializer_class = serializers.LessonDetailSerializer
+    def get_permissions(self):
+        if self.action.__eq__('get_comments'):
+            if self.request.method.__eq__('POST'):
+                return [permissions.IsAuthenticated]
 
+        return [permissions.AllowAny()]
     # Tạo endpoint phụ: GET /lessons/<id>/comments/
     @action(methods=['get'], url_path='comments', detail=True)
     def get_comment(self, request, pk):
-        # select_related('user') giúp tối ưu truy vấn khi lấy thông tin user của mỗi bình luận.
-        comments = self.get_object().comment_set.select_related('user').filter(active=True)
-        return Response(serializers.CommentSerializer(comments, many=True).data)
+        if request.method.__eq__('POST'):
+            t = serializers.CommentSerializer(data={
+                'content': request.data.get('content'),
+                'user': request.user.pk,
+                'lesson': pk
+            })
+        else:
+            # select_related('user') giúp tối ưu truy vấn khi lấy thông tin user của mỗi bình luận.
+            comments = self.get_object().comment_set.select_related('user').filter(active=True)
+            return Response(serializers.CommentSerializer(comments, many=True).data)
+
+
 
 
 class UserViewSet(viewsets.ViewSet, generics.CreateAPIView, generics.UpdateAPIView):

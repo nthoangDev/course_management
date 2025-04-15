@@ -11,3 +11,6 @@ class OwnerPerms(permissions.IsAuthenticated):
         # Sau đó kiểm tra xem user hiện tại có phải là chủ sở hữu của object không
         return super().has_object_permission(request, view, obj) and request.user == obj
 
+class CommentOwner(permissions.IsAuthenticated):
+    def has_object_permission(self, request, view, obj):
+        return super().has_object_permission(request, view, obj) and request.user == obj.user
