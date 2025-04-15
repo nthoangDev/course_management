@@ -82,7 +82,13 @@ class LessonViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
         else:
             # select_related('user') giúp tối ưu truy vấn khi lấy thông tin user của mỗi bình luận.
             comments = self.get_object().comment_set.select_related('user').filter(active=True)
-            return Response(serializers.CommentSerializer(comments, many=True).data)
+            p =paginators.CommentPaginator()
+            page = p.paginate_queryset(comments, self.request)
+            if page is not None:
+                serializer = serializers.CommentSerializer(page, many=True)
+                return p.get_paginated_response(serializer.data)
+            else:
+                return Response(serializers.CommentSerializer(comments, many=True).data)
 
     @action(methods=['post'], url_path='like', detail=True)
     def like(self, request, pk):
